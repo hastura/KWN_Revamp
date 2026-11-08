@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KWN — Kreasi Warna Nusantara · Navy Glassmorphism Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07101d;
+  --bg-gradient: radial-gradient(1200px 800px at 75% 10%, #1a3660 0%, transparent 70%),
+                 radial-gradient(1000px 800px at 15% 45%, #132847 0%, transparent 70%),
+                 radial-gradient(1100px 900px at 80% 85%, #183358 0%, transparent 70%),
+                 #081220;
+  --ink: #FFFFFF;
+  --ink-cream: #F4EFEA;
+  --mut: rgba(220, 230, 245, 0.65);
+  --line: rgba(255, 255, 255, 0.12);
+  --gold: #E8D7BE;
+  --gold-hover: #F5E8D3;
+  --gold-dark: #C4A882;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-hover: rgba(255, 255, 255, 0.09);
+  --glass-card: rgba(16, 32, 58, 0.52);
+  --gline: rgba(255, 255, 255, 0.14);
+  --gline-bright: rgba(255, 255, 255, 0.24);
+  --gb: blur(20px) saturate(160%);
+  color-scheme: dark;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+*, *::before, *::after { box-sizing: inherit; }
+html { height: 100%; scroll-padding-top: 110px; }
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg-gradient) fixed;
+  background-color: var(--bg);
+  color: var(--ink);
+  font: 300 16px/1.65 'Inter', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Ambient glow orbs */
+body::before, body::after {
+  content: "";
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 50%;
+  filter: blur(80px);
+}
+body::before {
+  top: 10%;
+  right: 5%;
+  width: 520px;
+  height: 480px;
+  background: radial-gradient(circle, rgba(140, 185, 255, 0.14) 0%, rgba(232, 215, 190, 0.08) 50%, transparent 70%);
+}
+body::after {
+  bottom: 12%;
+  left: 2%;
+  width: 600px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(70, 120, 200, 0.12) 0%, transparent 70%);
+}
+
+a { color: inherit; text-decoration: none; cursor: pointer; }
+.sf { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; }
+em { font-style: italic; }
+.w { max-width: 1240px; margin: 0 auto; padding: 0 28px; position: relative; z-index: 1; }
+
+/* Eyebrow label */
+.k {
+  font-size: 11px;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.k::after {
+  content: "";
+  width: 50px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+
+.rule { height: 1px; background: var(--line); transform-origin: left; }
+.ln { display: block; overflow: hidden; padding-bottom: .08em; }
+.ln > span { display: block; }
+
+/* Glass primitives */
+.glass {
+  background: var(--glass-card);
+  backdrop-filter: var(--gb);
+  -webkit-backdrop-filter: var(--gb);
+  border: 1px solid var(--gline);
+  border-radius: 24px;
+  box-shadow: 0 20px 50px rgba(0, 8, 20, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+/* Pills & Buttons */
+.pill {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 26px;
+  border-radius: 999px;
+  background: var(--glass);
+  backdrop-filter: var(--gb);
+  -webkit-backdrop-filter: var(--gb);
+  border: 1px solid var(--gline);
+  font-size: 11px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink-cream);
+  transition: all .3s cubic-bezier(.2, .7, .2, 1);
+  cursor: pointer;
+}
+.pill:hover {
+  background: var(--glass-hover);
+  border-color: rgba(232, 215, 190, 0.45);
+  color: var(--gold-hover);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+.pill.solid {
+  background: var(--gold);
+  color: #0b1a2f;
+  border-color: transparent;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(232, 215, 190, 0.25);
+}
+.pill.solid:hover {
+  background: var(--gold-hover);
+  color: #061120;
+  box-shadow: 0 10px 30px rgba(232, 215, 190, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Floating Navigation Header */
+header {
+  position: fixed;
+  top: 16px;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  padding: 0 24px;
+  pointer-events: none;
+}
+.hb {
+  pointer-events: auto;
+  max-width: 1180px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 62px;
+  padding: 0 28px;
+  border-radius: 999px;
+  background: rgba(12, 24, 46, 0.65);
+  backdrop-filter: var(--gb);
+  -webkit-backdrop-filter: var(--gb);
+  border: 1px solid var(--gline);
+  box-shadow: 0 16px 44px rgba(0, 6, 18, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+.lg {
+  font-size: 20px;
+  letter-spacing: .06em;
+  display: flex;
+  flex-direction: column;
+}
+.lg small {
+  font: 400 8px 'Inter', sans-serif;
+  letter-spacing: .32em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-top: 1px;
+}
+.nv {
+  display: flex;
+  gap: 32px;
+  font-size: 13px;
+  letter-spacing: .04em;
+}
+.nv a {
+  position: relative;
+  padding: 6px 0;
+  color: var(--mut);
+  transition: color .3s;
+}
+.nv a:hover, .nv a.on { color: var(--ink); }
+.nv a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform .4s cubic-bezier(.7, 0, .2, 1);
+}
+.nv a:hover::after, .nv a.on::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+.bg-btn {
+  display: none;
+  background: none;
+  border: 0;
+  color: var(--ink);
+  font: 400 12px 'Inter', sans-serif;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+/* Hero Section */
+#hero {
+  padding: 160px 0 60px;
+  position: relative;
+}
+.hg {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.trust-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 11px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--ink-cream);
+  margin-bottom: 24px;
+}
+.avatar-dots {
+  display: flex;
+  align-items: center;
+  margin-right: -4px;
+}
+.avatar-dots .dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #0d1e38;
+  margin-left: -5px;
+}
+.avatar-dots .dot:first-child { margin-left: 0; }
+.avatar-dots .d1 { background: #5c9eff; }
+.avatar-dots .d2 { background: var(--gold); }
+.avatar-dots .d3 { background: #dce6f5; }
+
+h1 {
+  font-size: clamp(52px, 8.5vw, 126px);
+  line-height: .92;
+  letter-spacing: -.02em;
+  margin: 0 0 28px;
+}
+h1 em { color: var(--gold); font-style: italic; }
+
+.hero-desc {
+  margin: 0 0 28px;
+  color: var(--mut);
+  font-size: 16px;
+  line-height: 1.7;
+  max-width: 480px;
+}
+
+.hero-tags {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.tag-pill {
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--mut);
+}
+
+.hero-cta-wrap {
+  margin-bottom: 40px;
+}
+
+/* 4-Step Process Strip */
+.process-strip {
+  width: 100%;
+  max-width: 520px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 16px 20px;
+  border-radius: 20px;
+  align-items: center;
+}
+.process-col {
+  display: flex;
+  flex-direction: column;
+  padding: 0 10px;
+}
+.process-div {
+  width: 1px;
+  height: 28px;
+  background: var(--line);
+}
+.p-num {
+  font-size: 11px;
+  letter-spacing: .2em;
+  color: var(--gold);
+  margin-bottom: 2px;
+}
+.p-lbl {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink-cream);
+  white-space: nowrap;
+}
+
+/* 3D Rotating Cube Hero */
+.hero-right {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.pan {
+  position: relative;
+  width: 100%;
+  min-height: 520px;
+  display: grid;
+  place-items: center;
+  perspective: 1200px;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+}
+.pan:active { cursor: grabbing; }
+
+.cube-ambient-glow {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(140, 185, 255, 0.22) 0%, rgba(232, 215, 190, 0.12) 40%, transparent 70%);
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+.cube {
+  --s: clamp(160px, 16vw, 210px);
+  --half-s: calc(var(--s) / 2);
+  width: var(--s);
+  height: var(--s);
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.fc {
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  border: 1px solid var(--gline-bright);
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.04) 55%, rgba(120, 170, 240, 0.1) 100%);
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.35),
+              0 24px 55px rgba(0, 6, 20, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  padding: 18px;
+  color: var(--ink);
+  transition: all .35s cubic-bezier(.2, .7, .2, 1);
+  -webkit-backface-visibility: visible;
+  backface-visibility: visible;
+}
+
+.fc[data-go] { cursor: pointer; }
+.fc[data-go]:hover {
+  background: linear-gradient(150deg, rgba(232, 215, 190, 0.3) 0%, rgba(255, 255, 255, 0.08) 55%, rgba(140, 190, 255, 0.2) 100%);
+  border-color: rgba(232, 215, 190, 0.7);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 0 35px rgba(232, 215, 190, 0.25);
+}
+
+.fc-icon {
+  width: 32px;
+  height: 32px;
+  color: var(--gold);
+  stroke: var(--gold);
+  opacity: .95;
+  transition: transform .3s;
+}
+.fc[data-go]:hover .fc-icon {
+  transform: scale(1.1);
+}
+
+.fc-num {
+  font-size: 10px;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-family: 'Inter', sans-serif;
+  margin-top: -2px;
+}
+.fc-title {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 26px;
+  font-style: italic;
+  line-height: 1.1;
+  color: var(--ink-cream);
+}
+.fc-sub {
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--mut);
+  font-family: 'Inter', sans-serif;
+  opacity: .85;
+}
+.fc-logo {
+  font-size: 32px;
+  letter-spacing: .1em;
+  color: var(--gold);
+}
+
+/* 3D faces layout */
+.f0 { transform: translateZ(var(--half-s)); }
+.f1 { transform: rotateY(90deg) translateZ(var(--half-s)); }
+.f2 { transform: rotateY(180deg) translateZ(var(--half-s)); }
+.f3 { transform: rotateY(-90deg) translateZ(var(--half-s)); }
+.f4 { transform: rotateX(90deg) translateZ(var(--half-s)); }
+.f5 { transform: rotateX(-90deg) translateZ(var(--half-s)); }
+
+.cube-pill {
+  position: absolute;
+  bottom: 14px;
+  padding: 8px 20px;
+  border-radius: 999px;
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--mut);
+  pointer-events: none;
+}
+
+/* Section styling */
+section { padding: 90px 0; }
+h2 {
+  font-size: clamp(36px, 5.2vw, 76px);
+  line-height: 1.05;
+  margin: 0;
+  letter-spacing: -.015em;
+}
+h2 em { color: var(--gold); }
+
+/* About & Services Grid */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 56px;
+  align-items: start;
+}
+.about-info h2 { margin: 18px 0 24px; }
+.about-paragraphs { color: var(--mut); font-size: 15px; line-height: 1.8; }
+.about-paragraphs p { margin: 0 0 20px; }
+
+.services-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.sc {
+  padding: 34px 38px;
+  transition: transform .4s cubic-bezier(.2, .7, .2, 1), border-color .3s;
+}
+.sc:hover {
+  transform: translateY(-4px);
+  border-color: rgba(232, 215, 190, 0.45);
+}
+.sc h3 {
+  margin: 0 0 18px;
+  font-size: clamp(26px, 3.2vw, 42px);
+  line-height: 1.1;
+  color: var(--ink-cream);
+}
+.sc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.sc-list li {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  color: var(--mut);
+  font-size: 15px;
+  transition: color .3s, padding-left .3s;
+}
+.sc-list li:first-child { border-top: 1px solid var(--line); }
+.sc-list li::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+.sc:hover .sc-list li { color: var(--ink-cream); }
+
+/* Clients Strip */
+.clients-strip {
+  padding: 26px 32px;
+  overflow: hidden;
+  position: relative;
+}
+.clients-marquee {
+  display: flex;
+  width: max-content;
+  align-items: center;
+}
+.c-item {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: clamp(22px, 2.6vw, 32px);
+  font-style: italic;
+  color: var(--ink-cream);
+  padding: 0 36px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 36px;
+  opacity: .88;
+  transition: opacity .3s, color .3s;
+}
+.c-item::after {
+  content: "✦";
+  font-style: normal;
+  font-size: 14px;
+  color: var(--gold);
+  opacity: .6;
+}
+.c-item:hover {
+  opacity: 1;
+  color: var(--gold);
+}
+
+/* Our Project Section */
+.pj-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+.pj-card {
+  padding: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform .5s cubic-bezier(.2, .7, .2, 1), border-color .35s;
+}
+.pj-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(232, 215, 190, 0.45);
+}
+.pj-visual {
+  position: relative;
+  aspect-ratio: 4/5;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #09172c;
+}
+.pj-visual-inner {
+  position: absolute;
+  inset: -10%;
+  transition: transform 1.2s cubic-bezier(.2, .7, .2, 1);
+}
+.pj-card:hover .pj-visual-inner {
+  transform: scale(1.1);
+}
+
+.v1 .pj-visual-inner { background: linear-gradient(135deg, #102a4d 20%, #2f568f 60%, #173663 100%); }
+.v2 .pj-visual-inner { background: linear-gradient(190deg, #E8D7BE 0%, #876d4d 60%, #152c4c 100%); }
+.v3 .pj-visual-inner { background: radial-gradient(circle at 65% 35%, #E8D7BE 0%, #183761 65%, #0a182d 100%); }
+.v4 .pj-visual-inner { background: linear-gradient(0deg, #09172d 10%, #3d6ca8 90%); }
+
+.pj-content {
+  padding: 18px 8px 6px;
+  display: flex;
+  flex-direction: column;
+}
+.pj-tag {
+  font-size: 10px;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.pj-name {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--ink-cream);
+}
+.nt {
+  color: var(--mut);
+  font-size: 14px;
+  margin-top: 36px;
+}
+
+/* Furniture Rent CTA Banner */
+.rt-panel {
+  padding: 48px 56px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+}
+.rt-left h2 { margin: 16px 0 14px; }
+.rt-desc {
+  color: var(--mut);
+  font-size: 15px;
+  margin: 0;
+  max-width: 520px;
+}
+.rt-right { flex-shrink: 0; }
+
+/* Contact Section */
+.ct-panel {
+  padding: 56px 60px;
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 60px;
+  align-items: start;
+}
+.ct-left h2 { margin: 16px 0 20px; max-width: 620px; }
+.ct-desc {
+  color: var(--mut);
+  font-size: 15px;
+  line-height: 1.75;
+  margin: 0 0 32px;
+  max-width: 540px;
+}
+.ct-btn-wrap { display: flex; }
+
+.ct-right {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  border-left: 1px solid var(--line);
+  padding-left: 50px;
+}
+.ct-item { display: flex; flex-direction: column; gap: 6px; }
+.ct-lbl {
+  font-size: 10px;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.ct-val {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ink-cream);
+}
+.ct-link {
+  color: var(--ink-cream);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 2px;
+  transition: color .3s, border-color .3s;
+}
+.ct-link:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+/* Footer */
+footer {
+  padding: 40px 0 50px;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: .06em;
+  color: var(--mut);
+}
+
+/* Rental Catalogue Page (#rental) */
+#rental {
+  display: none;
+  padding: 160px 0 100px;
+  min-height: 100vh;
+}
+.rental-intro {
+  color: var(--mut);
+  max-width: 560px;
+  font-size: 16px;
+  margin: 0 0 36px;
+}
+.tb {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 44px;
+  flex-wrap: wrap;
+}
+.tb button {
+  background: var(--glass);
+  backdrop-filter: var(--gb);
+  -webkit-backdrop-filter: var(--gb);
+  border: 1px solid var(--gline);
+  border-radius: 999px;
+  padding: 12px 28px;
+  font: 400 12px 'Inter', sans-serif;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--mut);
+  cursor: pointer;
+  transition: all .3s;
+}
+.tb button:hover {
+  color: var(--ink);
+  border-color: rgba(232, 215, 190, 0.45);
+}
+.tb button.on {
+  background: var(--gold);
+  color: #0b1a2f;
+  border-color: transparent;
+  font-weight: 500;
+  box-shadow: 0 6px 20px rgba(232, 215, 190, 0.28);
+}
+
+.rg {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+.ri {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  transition: transform .5s cubic-bezier(.2, .7, .2, 1), border-color .35s;
+}
+.ri:hover {
+  transform: translateY(-8px);
+  border-color: rgba(232, 215, 190, 0.5);
+}
+.ri-thumb {
+  aspect-ratio: 4/3;
+  border-radius: 16px;
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.08) 0%, rgba(30, 60, 110, 0.3) 100%);
+  border: 1px solid var(--gline);
+  display: grid;
+  place-items: center;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+.ri-thumb svg {
+  width: 52px;
+  height: 52px;
+  stroke: var(--gold);
+  opacity: .9;
+}
+.ri-body {
+  padding: 0 8px 10px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+.ri-cat {
+  font-size: 10px;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.ri-title {
+  margin: 0 0 10px;
+  font-size: clamp(24px, 2.4vw, 32px);
+  line-height: 1.15;
+  color: var(--ink-cream);
+}
+.ri-desc {
+  margin: 0 0 24px;
+  color: var(--mut);
+  font-size: 14px;
+  line-height: 1.6;
+  flex-grow: 1;
+}
+.ri-btn {
+  align-self: flex-start;
+  font-size: 10px;
+  padding: 10px 22px;
+}
+
+/* Floating Preview & Transition Curtain */
+#pv {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 220px;
+  height: 260px;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0;
+  scale: .7;
+  display: grid;
+  place-items: center;
+  color: var(--ink-cream);
+  font: italic 400 24px "Instrument Serif", Georgia, serif;
+  text-align: center;
+  padding: 24px;
+}
+#cur {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  background: #091528;
+  pointer-events: none;
+  visibility: hidden;
+  display: grid;
+  place-items: center;
+  color: var(--gold);
+  font: italic 400 44px "Instrument Serif", Georgia, serif;
+  letter-spacing: .02em;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1080px) {
+  .hg { grid-template-columns: 1fr; gap: 40px; }
+  .hero-right { order: -1; }
+  .pan { min-height: 420px; }
+  .about-grid { grid-template-columns: 1fr; gap: 40px; }
+  .ct-panel { grid-template-columns: 1fr; gap: 40px; }
+  .ct-right { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 36px; }
+  .pj-grid { grid-template-columns: repeat(2, 1fr); }
+  .rg { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 820px) {
+  header { padding: 0 16px; }
+  .hb { padding: 0 20px; }
+  .nv {
+    display: none;
+    position: absolute;
+    top: 72px;
+    left: 16px;
+    right: 16px;
+    flex-direction: column;
+    gap: 0;
+    padding: 14px 24px 20px;
+    border-radius: 24px;
+    background: rgba(10, 22, 42, 0.94);
+    backdrop-filter: var(--gb);
+    -webkit-backdrop-filter: var(--gb);
+    border: 1px solid var(--gline);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  }
+  .nv.open { display: flex; }
+  .nv a { padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .bg-btn { display: block; }
+  
+  .process-strip {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .process-div { display: none; }
+  .rt-panel { flex-direction: column; align-items: flex-start; padding: 36px 30px; }
+  .ct-panel { padding: 40px 28px; }
+  .pj-grid { grid-template-columns: 1fr; }
+  .rg { grid-template-columns: 1fr; }
+  section { padding: 70px 0; }
+  #pv { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div id="cur">Kreasi Warna Nusantara</div>
+<div id="pv" class="glass"></div>
+
+<!-- Floating Navigation Bar -->
+<header id="hd">
+  <div class="hb">
+    <a class="lg sf" data-nav="top">
+      KWN
+      <small>Kreasi Warna Nusantara</small>
+    </a>
+    <nav class="nv" id="nv">
+      <a data-nav="top" class="on">Home</a>
+      <a data-nav="about">About</a>
+      <a data-nav="projects">Our Project</a>
+      <a data-nav="rental">Furniture Rent</a>
+      <a data-nav="contact">Contact</a>
+    </nav>
+    <button class="bg-btn" id="bb">Menu</button>
+  </div>
+</header>
+
+<main id="home">
+  <!-- Hero Section with 3D Rotating Glass Cube -->
+  <section id="hero">
+    <div class="w">
+      <div class="hg">
+        <div class="hero-left">
+          <div class="trust-badge glass">
+            <div class="avatar-dots">
+              <span class="dot d1"></span>
+              <span class="dot d2"></span>
+              <span class="dot d3"></span>
+            </div>
+            <span>Dipercaya brand nasional &amp; global</span>
+          </div>
+
+          <h1 class="sf">
+            <span class="ln"><span>Solution for</span></span>
+            <span class="ln"><span><em>All Your Event</em></span></span>
+            <span class="ln"><span>Needs</span></span>
+          </h1>
+
+          <p class="hero-desc" id="hp">
+            Kami ahli dalam eksekusi proyek predesigned maupun design and build — dari booth pameran hingga penyelenggaraan event.
+          </p>
+
+          <div class="hero-tags">
+            <span class="tag-pill glass">Design and Build</span>
+            <span class="tag-pill glass">Event Organizer</span>
+          </div>
+
+          <div class="hero-cta-wrap" id="hc">
+            <a class="pill solid" data-nav="contact">Konsultasi Sekarang →</a>
+          </div>
+
+          <!-- 4 Process Mini-Cards -->
+          <div class="process-strip glass">
+            <div class="process-col">
+              <span class="p-num">01</span>
+              <span class="p-lbl">Konsultasi</span>
+            </div>
+            <div class="process-div"></div>
+            <div class="process-col">
+              <span class="p-num">02</span>
+              <span class="p-lbl">Desain</span>
+            </div>
+            <div class="process-div"></div>
+            <div class="process-col">
+              <span class="p-num">03</span>
+              <span class="p-lbl">Produksi</span>
+            </div>
+            <div class="process-div"></div>
+            <div class="process-col">
+              <span class="p-num">04</span>
+              <span class="p-lbl">Event Jalan</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3D Rotating Frosted Glass Cube -->
+        <div class="hero-right">
+          <div class="pan" id="pan">
+            <div class="cube-ambient-glow"></div>
+            <div class="cube" id="cube">
+              <!-- Face 0: About -->
+              <div class="fc f0" data-go="about">
+                <svg class="fc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+                <span class="fc-num">01</span>
+                <span class="fc-title">About</span>
+                <span class="fc-sub">Klik untuk masuk</span>
+              </div>
+              <!-- Face 1: Our Project -->
+              <div class="fc f1" data-go="projects">
+                <svg class="fc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span class="fc-num">02</span>
+                <span class="fc-title">Our Project</span>
+                <span class="fc-sub">Klik untuk masuk</span>
+              </div>
+              <!-- Face 2: Furniture Rent -->
+              <div class="fc f2" data-go="rental">
+                <svg class="fc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M4 21V9l8-5 8 5v12"/><rect x="9.5" y="13" width="5" height="8"/></svg>
+                <span class="fc-num">03</span>
+                <span class="fc-title">Furniture Rent</span>
+                <span class="fc-sub">Klik untuk masuk</span>
+              </div>
+              <!-- Face 3: Contact (Matching reference image) -->
+              <div class="fc f3" data-go="contact">
+                <svg class="fc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 7 12 13 21 7"/></svg>
+                <span class="fc-num">04</span>
+                <span class="fc-title">Contact</span>
+                <span class="fc-sub">Klik untuk masuk</span>
+              </div>
+              <!-- Face 4: Top Logo -->
+              <div class="fc f4">
+                <span class="fc-logo sf">KWN</span>
+                <span class="fc-sub">Kreasi Warna Nusantara</span>
+              </div>
+              <!-- Face 5: Bottom Logo -->
+              <div class="fc f5">
+                <span class="fc-logo sf">KWN</span>
+                <span class="fc-sub">Exhibition &amp; Event</span>
+              </div>
+            </div>
+            <div class="cube-pill glass">
+              Drag untuk memutar · klik sisi kubus untuk menu
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About & Services: Our Core Business -->
+  <section id="about">
+    <div class="w">
+      <div class="about-grid">
+        <div class="about-info rv">
+          <div class="k">Our Core Business</div>
+          <h2 class="sf">Desain matang, <em>eksekusi tepat</em></h2>
+          <div class="about-paragraphs">
+            <p>Pengalaman desain kami memungkinkan kami mengembangkan kebutuhan performa klien, setelah diskusi mendetail, menjadi skema yang ramah lingkungan dan dapat dikerjakan.</p>
+            <p>Pengetahuan manajemen kontrak memastikan instalasi berjalan sesuai jadwal dan anggaran, dengan sikap kooperatif — didukung komunikasi, pelaporan progres, dan pendekatan fleksibel dalam menyelesaikan masalah.</p>
+          </div>
+        </div>
+        <div class="services-stack rv">
+          <div class="sc glass">
+            <h3 class="sf">Design and Build</h3>
+            <ul class="sc-list">
+              <li><span>Booth Exhibition</span></li>
+              <li><span>Interior Works</span></li>
+              <li><span>Mechanical &amp; Electrical System</span></li>
+            </ul>
+          </div>
+          <div class="sc glass">
+            <h3 class="sf">Event Organizer</h3>
+            <ul class="sc-list">
+              <li><span>Event Management</span></li>
+              <li><span>Lighting &amp; Sound System</span></li>
+              <li><span>Styrofoam Decoration</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Our Clients -->
+  <section id="clients">
+    <div class="w">
+      <div class="k" style="margin-bottom:22px">Our Clients</div>
+      <div class="clients-strip glass rv">
+        <div class="clients-marquee" id="cmq">
+          <!-- Populated by JavaScript with infinite duplicate loop -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Our Project -->
+  <section id="projects">
+    <div class="w">
+      <div class="k">Our Project</div>
+      <h2 class="sf rv" style="margin:16px 0 36px">Karya terbaru <em>kami</em></h2>
+      <div class="pj-grid">
+        <div class="pj-card glass rv">
+          <div class="pj-visual v1"><div class="pj-visual-inner"></div></div>
+          <div class="pj-content">
+            <span class="pj-tag">EXHIBITION</span>
+            <h4 class="pj-name">Booth Exhibition</h4>
+          </div>
+        </div>
+        <div class="pj-card glass rv">
+          <div class="pj-visual v2"><div class="pj-visual-inner"></div></div>
+          <div class="pj-content">
+            <span class="pj-tag">INTERIOR</span>
+            <h4 class="pj-name">Interior Works</h4>
+          </div>
+        </div>
+        <div class="pj-card glass rv">
+          <div class="pj-visual v3"><div class="pj-visual-inner"></div></div>
+          <div class="pj-content">
+            <span class="pj-tag">M&amp;E</span>
+            <h4 class="pj-name">Mechanical &amp; Electrical</h4>
+          </div>
+        </div>
+        <div class="pj-card glass rv">
+          <div class="pj-visual v4"><div class="pj-visual-inner"></div></div>
+          <div class="pj-content">
+            <span class="pj-tag">EVENT</span>
+            <h4 class="pj-name">Event Management</h4>
+          </div>
+        </div>
+      </div>
+      <p class="nt">Portfolio lengkap akan segera diperbarui.</p>
+    </div>
+  </section>
+
+  <!-- Furniture Rent Callout Panel -->
+  <section class="rt-section">
+    <div class="w">
+      <div class="glass rt-panel rv">
+        <div class="rt-left">
+          <div class="k">Furniture Rent</div>
+          <h2 class="sf">Sewa properti, furniture <em>&amp; sign box</em></h2>
+          <p class="rt-desc">Lengkapi booth dan event Anda dengan aset siap pakai dari koleksi kami.</p>
+        </div>
+        <div class="rt-right">
+          <a class="pill solid" data-nav="rental">Lihat Koleksi →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Panel -->
+  <section id="contact">
+    <div class="w">
+      <div class="glass ct-panel rv">
+        <div class="ct-left">
+          <div class="k">Contact</div>
+          <h2 class="sf">Let’s build your next <em>exhibition booth</em> together</h2>
+          <p class="ct-desc">Solusi desain dan produksi booth pameran yang kreatif, presisi, dan profesional untuk memperkuat brand Anda. Konsultasikan kebutuhan booth Anda bersama team kami.</p>
+          <div class="ct-btn-wrap">
+            <a class="pill solid" href="https://wa.me/628151709050?text=Halo%20KWN,%20saya%20ingin%20konsultasi%20mengenai%20kebutuhan%20event/booth" target="_blank" rel="noopener">Hubungi Kami →</a>
+          </div>
+        </div>
+        <div class="ct-right">
+          <div class="ct-item">
+            <span class="ct-lbl">ALAMAT</span>
+            <span class="ct-val">Jl. Raya Pkp No.45, RT.10/RW.8, Klp. Dua Wetan, Kec. Ciracas, Kota Jakarta Timur 13730</span>
+          </div>
+          <div class="ct-item">
+            <span class="ct-lbl">TELEPON</span>
+            <span class="ct-val">+62 21 3883 4080<br>+62 815 1709 9050</span>
+          </div>
+          <div class="ct-item">
+            <span class="ct-lbl">EMAIL</span>
+            <span class="ct-val"><a href="mailto:sales.kreasiwarnanusantara@gmail.com" class="ct-link">sales.kreasiwarnanusantara@gmail.com</a></span>
+          </div>
+          <div class="ct-item">
+            <span class="ct-lbl">INSTAGRAM</span>
+            <span class="ct-val"><a href="https://instagram.com/kreasi.warna.nusantara" target="_blank" rel="noopener" class="ct-link">@kreasi.warna.nusantara</a></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Rental Catalogue View Page -->
+<main id="rental">
+  <div class="w">
+    <div class="k">Furniture Rent · Katalog</div>
+    <h1 class="sf" style="font-size:clamp(46px,7.5vw,104px);margin:18px 0 20px">
+      <span class="ln"><span>Aset siap sewa untuk</span></span>
+      <span class="ln"><span><em>booth &amp; event</em></span></span>
+    </h1>
+    <p class="rental-intro">
+      Properti, furniture, dan sign box dari KWN. Hubungi tim kami untuk ketersediaan dan penawaran sesuai kebutuhan Anda.
+    </p>
+    <div class="tb" id="tb"></div>
+    <div class="rg" id="rl"></div>
+  </div>
+</main>
+
+<footer>
+  <div class="w">
+    <span>Kreasi Warna Nusantara ©2026 · Jakarta Timur</span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const WA = 'https://wa.me/628151709050?text=';
+
+/* Populate Client Marquee */
+const clients = ['Amazon', 'BRI', 'Bystronic', 'Clariant', 'CNOOC', 'Lamb Weston', 'McAfee', 'OC–ETP', 'Polliwalks', 'Sasa', 'Yamaha Marine', 'YUKK'];
+const cmq = $('#cmq');
+if (cmq) {
+  const repeated = [...clients, ...clients, ...clients];
+  cmq.innerHTML = repeated.map(c => `<span class="c-item">${c}</span>`).join('');
+  if (!RM) {
+    const tween = gsap.to('#cmq', {
+      xPercent: -33.333,
+      duration: 34,
+      ease: 'none',
+      repeat: -1
+    });
+    cmq.addEventListener('mouseenter', () => tween.pause());
+    cmq.addEventListener('mouseleave', () => tween.play());
+  }
+}
+
+/* Rental Catalogue Data */
+const catalogueData = {
+  'Properti': [
+    ['Backdrop & Partisi', 'Panel backdrop dan partisi modular untuk booth maupun panggung.'],
+    ['Podium & Stage', 'Platform panggung dan podium untuk presentasi dan peluncuran.'],
+    ['Counter Display', 'Reception dan counter display siap pasang.'],
+    ['Rak & Display', 'Rak produk dan etalase untuk showcase.']
+  ],
+  'Furniture': [
+    ['Sofa Lounge', 'Area lounge nyaman untuk ruang tamu booth.'],
+    ['Meja & Kursi Bistro', 'Set meja dan kursi untuk meeting santai.'],
+    ['Kursi Bar', 'Bar stool untuk counter dan pantry.'],
+    ['Meja Meeting', 'Meja rapat untuk ruang pertemuan booth.']
+  ],
+  'Sign Box': [
+    ['Sign Box Backlit', 'Kotak lampu dengan grafis backlit menyala.'],
+    ['Totem Sign', 'Sign berdiri untuk penunjuk arah dan branding.'],
+    ['Hanging Sign', 'Sign gantung untuk identitas booth dari jauh.'],
+    ['Neon Box', 'Sign berpendar untuk aksen visual.']
+  ]
+};
+
+const ICON_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+  <path d="M4 21V9l8-5 8 5v12"/>
+  <rect x="9.5" y="13" width="5" height="8"/>
+</svg>`;
+
+let curTab = 'Properti';
+const pv = $('#pv');
+const px = gsap.quickTo(pv, 'x', { duration: .45, ease: 'power3' });
+const py = gsap.quickTo(pv, 'y', { duration: .45, ease: 'power3' });
+
+function renderCatalogue() {
+  $('#tb').innerHTML = Object.keys(catalogueData).map(k => `
+    <button class="${k === curTab ? 'on' : ''}" data-t="${k}">${k}</button>
+  `).join('');
+
+  $('#rl').innerHTML = catalogueData[curTab].map(([n, d]) => `
+    <div class="ri glass" data-n="${n}">
+      <div class="ri-thumb">${ICON_SVG}</div>
+      <div class="ri-body">
+        <div class="ri-cat">${curTab}</div>
+        <h4 class="sf ri-title">${n}</h4>
+        <p class="ri-desc">${d}</p>
+        <a class="pill ri-btn" target="_blank" rel="noopener" href="${WA + encodeURIComponent('Halo KWN, saya ingin menanyakan ketersediaan sewa: ' + n)}">Tanya Ketersediaan</a>
+      </div>
+    </div>
+  `).join('');
+
+  gsap.from('.ri', { y: 35, opacity: 0, duration: .7, stagger: .08, ease: 'power3.out' });
+}
+
+$('#tb').addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (b) {
+    curTab = b.dataset.t;
+    renderCatalogue();
+  }
+});
+
+$('#rl').addEventListener('pointerover', e => {
+  const r = e.target.closest('.ri');
+  if (r && matchMedia('(hover:hover)').matches) {
+    pv.textContent = r.dataset.n;
+    gsap.to(pv, { opacity: 1, scale: 1, duration: .35 });
+  }
+});
+$('#rl').addEventListener('pointerleave', () => gsap.to(pv, { opacity: 0, scale: .7, duration: .3 }));
+addEventListener('pointermove', e => {
+  px(e.clientX + 30);
+  py(e.clientY - 130);
+});
+
+renderCatalogue();
+
+/* Page Routing with Curtain */
+let currentPage = 'home';
+gsap.set('#cur', { yPercent: 100 });
+
+function swapPage(targetPage, callback) {
+  const cur = $('#cur');
+  gsap.timeline()
+    .set(cur, { visibility: 'visible', yPercent: 100 })
+    .to(cur, { yPercent: 0, duration: .65, ease: 'power4.inOut' })
+    .add(() => {
+      $('#' + currentPage).style.display = 'none';
+      $('#' + targetPage).style.display = 'block';
+      currentPage = targetPage;
+      window.scrollTo(0, 0);
+      ScrollTrigger.refresh();
+      if (targetPage === 'rental') {
+        gsap.from('#rental .ln > span', { yPercent: 115, duration: 1, stagger: .1, ease: 'power4.out', delay: .2 });
+      }
+      if (callback) callback();
+    })
+    .to(cur, { yPercent: -100, duration: .65, ease: 'power4.inOut' })
+    .set(cur, { visibility: 'hidden', yPercent: 100 });
+}
+
+function setActiveNav(navKey) {
+  $$('.nv a').forEach(a => a.classList.toggle('on', a.dataset.nav === navKey));
+}
+
+function navigateTo(targetKey) {
+  $('#nv').classList.remove('open');
+  setActiveNav(targetKey);
+
+  if (targetKey === 'rental') {
+    if (currentPage !== 'rental') {
+      swapPage('rental');
+      history.replaceState(null, '', '#rental');
+    }
+    return;
+  }
+
+  history.replaceState(null, '', location.pathname);
+  const scrollAction = () => {
+    const el = targetKey === 'top' ? document.body : document.getElementById(targetKey);
+    if (el) el.scrollIntoView({ behavior: RM ? 'auto' : 'smooth' });
+  };
+
+  if (currentPage === 'home') {
+    scrollAction();
+  } else {
+    swapPage('home', () => setTimeout(scrollAction, 60));
+  }
+}
+
+document.addEventListener('click', e => {
+  const n = e.target.closest('[data-nav]');
+  if (n) {
+    e.preventDefault();
+    navigateTo(n.dataset.nav);
+  }
+});
+
+$('#bb').onclick = () => $('#nv').classList.toggle('open');
+
+if (location.hash === '#rental') {
+  $('#home').style.display = 'none';
+  $('#rental').style.display = 'block';
+  currentPage = 'rental';
+  setActiveNav('rental');
+}
+
+/* 3D Frosted Glass Rotating Cube */
+const pan = $('#pan');
+const cube = $('#cube');
+let rx = -18, ry = 28;
+let vx = 0, vy = 0;
+let isDragging = false;
+let moveDist = 0;
+let lastX = 0, lastY = 0;
+
+pan.addEventListener('pointerdown', e => {
+  isDragging = true;
+  moveDist = 0;
+  lastX = e.clientX;
+  lastY = e.clientY;
+  vx = 0; vy = 0;
+  pan.setPointerCapture(e.pointerId);
+});
+
+pan.addEventListener('pointermove', e => {
+  if (!isDragging) return;
+  const dx = e.clientX - lastX;
+  const dy = e.clientY - lastY;
+  lastX = e.clientX;
+  lastY = e.clientY;
+  moveDist += Math.abs(dx) + Math.abs(dy);
+  vy = dx * 0.42;
+  vx = -dy * 0.42;
+  ry += vy;
+  rx += vx;
+});
+
+pan.addEventListener('pointerup', e => {
+  isDragging = false;
+  if (moveDist < 6) {
+    const face = document.elementFromPoint(e.clientX, e.clientY)?.closest('.fc[data-go]');
+    if (face) navigateTo(face.dataset.go);
+  }
+});
+
+gsap.ticker.add(() => {
+  if (!isDragging) {
+    vy *= 0.94;
+    vx *= 0.94;
+    ry += vy + (RM ? 0 : 0.18);
+    rx += vx;
+    rx += (-18 - rx) * 0.02;
+  }
+  cube.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+});
+
+/* Intro Animations */
+gsap.timeline({ defaults: { ease: 'power4.out' } })
+  .from('#hd', { yPercent: -120, duration: 1 })
+  .from('.trust-badge', { opacity: 0, y: 16, duration: .8 }, '-=.5')
+  .from('#hero h1 .ln > span', { yPercent: 115, duration: 1.2, stagger: .12 }, '-=.6')
+  .from('#hp, .hero-tags, #hc', { y: 24, opacity: 0, duration: .8, stagger: .12 }, '-=.7')
+  .from('.process-strip', { opacity: 0, y: 30, duration: .9 }, '-=.6')
+  .from('#cube', { scale: .35, rotation: -25, opacity: 0, duration: 1.4, ease: 'expo.out' }, '-=1.2')
+  .from('.clients-strip', { opacity: 0, y: 30, duration: .8 }, '-=.5');
+
+/* ScrollTrigger Animations */
+$$('.rv').forEach(el => {
+  gsap.from(el, {
+    y: 50,
+    opacity: 0,
+    duration: 1,
+    ease: 'power3.out',
+    scrollTrigger: {
+      trigger: el,
+      start: 'top 88%'
+    }
+  });
+});
+
+/* Dynamic Header Scroll & Active Section Highlighting */
+ScrollTrigger.create({
+  start: 0,
+  end: 'max',
+  onUpdate: self => {
+    gsap.to('#hd', {
+      y: self.direction === 1 && self.scroll() > 220 ? -100 : 0,
+      opacity: self.direction === 1 && self.scroll() > 220 ? 0 : 1,
+      duration: .35,
+      overwrite: true
+    });
+  }
+});
+
+['about', 'projects', 'contact'].forEach(id => {
+  ScrollTrigger.create({
+    trigger: '#' + id,
+    start: 'top 55%',
+    end: 'bottom 55%',
+    onToggle: s => {
+      if (s.isActive && currentPage === 'home') setActiveNav(id);
+    }
+  });
+});
+</script>
+</body>
+</html>
