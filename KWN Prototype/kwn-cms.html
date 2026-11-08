@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KWN Content Studio · CMS Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sidebar-bg: #0c1a2e;
+  --sidebar-hover: rgba(255, 255, 255, 0.06);
+  --sidebar-active: #1d3353;
+  --sidebar-text: #b8c7db;
+  --sidebar-title: #f5f0e8;
+  --bg: #F4EFEA;
+  --bg-gradient: radial-gradient(1100px 700px at 85% 0%, #faede1 0%, #f4efea 50%, #eee6dd 100%);
+  --card: #FFFFFF;
+  --card-border: rgba(215, 203, 188, 0.55);
+  --ink: #162235;
+  --ink-secondary: #576579;
+  --mut: #8291a5;
+  --line: rgba(22, 34, 53, 0.1);
+  --gold: #c89b65;
+  --gold-dark: #a87e4c;
+  --gold-bg: #FAF4EB;
+  --green: #1F7A4D;
+  --orange: #D97706;
+  --radius: 18px;
+  --shadow: 0 10px 30px rgba(18, 30, 52, 0.05);
+  color-scheme: light;
+  box-sizing: border-box;
+}
+*, *::before, *::after { box-sizing: inherit; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg-gradient) fixed;
+  color: var(--ink);
+  font: 400 14px/1.6 'Inter', system-ui, -apple-system, sans-serif;
+  display: flex;
+  overflow-x: hidden;
+}
+
+/* Typography Helpers */
+.sf { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; }
+em { font-style: italic; }
+
+/* Layout Shell */
+.app-container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+aside.sidebar {
+  width: 250px;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 28px 16px 20px;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 40;
+}
+.brand-box {
+  padding: 0 12px 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 20px;
+}
+.brand-logo {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 26px;
+  color: var(--sidebar-title);
+  letter-spacing: .06em;
+  line-height: 1;
+}
+.brand-sub {
+  font-size: 9px;
+  letter-spacing: .28em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.nav-group-title {
+  font-size: 10px;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: #637793;
+  padding: 14px 12px 6px;
+  font-weight: 600;
+}
+.nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 14px;
+  border-radius: 12px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.nav-item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.nav-icon {
+  width: 16px;
+  height: 16px;
+  opacity: .75;
+}
+.nav-item:hover {
+  background: var(--sidebar-hover);
+  color: #FFFFFF;
+}
+.nav-item.active {
+  background: var(--sidebar-active);
+  color: #FFFFFF;
+  font-weight: 500;
+}
+.nav-badge {
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 1px 7px;
+  border-radius: 999px;
+  color: #FFFFFF;
+}
+
+.sidebar-user {
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.user-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #2a4163;
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 600;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+.user-avatar::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background: #10b981;
+  border: 2px solid var(--sidebar-bg);
+  border-radius: 50%;
+}
+.user-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+.user-name {
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: 500;
+}
+.user-role {
+  font-size: 11px;
+  color: #7b8fa7;
+}
+
+/* Main Content Area */
+main.main-content {
+  flex-grow: 1;
+  padding: 30px 44px 80px;
+  max-width: 1360px;
+}
+
+/* Top Action Header */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.breadcrumbs {
+  font-size: 13px;
+  color: var(--ink-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.breadcrumbs span.current {
+  color: var(--ink);
+  font-weight: 500;
+}
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.badge-status {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: #fdf5ea;
+  color: #9c6e35;
+  border: 1px solid rgba(197, 155, 99, 0.3);
+}
+
+/* Page Header Titles */
+.page-title-wrap {
+  margin-bottom: 28px;
+}
+.page-title {
+  font-size: 40px;
+  line-height: 1.05;
+  margin: 0 0 6px;
+  letter-spacing: -.02em;
+}
+.page-title em {
+  color: var(--gold-dark);
+}
+.page-desc {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink-secondary);
+}
+
+/* Standard Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all .2s;
+  text-decoration: none;
+}
+.btn-secondary {
+  background: #FFFFFF;
+  border-color: rgba(22, 34, 53, 0.14);
+  color: var(--ink);
+}
+.btn-secondary:hover {
+  background: #f9f7f4;
+  border-color: rgba(22, 34, 53, 0.25);
+}
+.btn-primary {
+  background: #0c1a2e;
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(12, 26, 46, 0.18);
+}
+.btn-primary:hover {
+  background: #152945;
+  transform: translateY(-1px);
+}
+
+/* View Sections (Switchable) */
+.view-panel {
+  display: none;
+}
+.view-panel.active {
+  display: block;
+}
+
+/* Card Style */
+.cms-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--shadow);
+  padding: 24px 28px;
+}
+.card-header-label {
+  font-size: 11px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--mut);
+  font-weight: 600;
+  margin-bottom: 18px;
+  display: block;
+}
+
+/* Form Controls */
+.form-group {
+  margin-bottom: 20px;
+}
+.form-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-secondary);
+  margin-bottom: 8px;
+}
+.form-label .char-count {
+  color: var(--mut);
+  font-size: 11px;
+}
+.form-input, .form-textarea, .form-select {
+  width: 100%;
+  padding: 11px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #FFFFFF;
+  font: 400 14px 'Inter', sans-serif;
+  color: var(--ink);
+  transition: border-color .2s, box-shadow .2s;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  outline: none;
+  border-color: var(--gold-dark);
+  box-shadow: 0 0 0 3px rgba(200, 155, 101, 0.18);
+}
+.form-textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+/* Toggle Switch (iOS / Mac style) */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #d1d5db;
+  transition: .3s;
+  border-radius: 24px;
+}
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+input:checked + .slider {
+  background-color: var(--green);
+}
+input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+/* Tags */
+.tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: #f4efea;
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+.tag-badge button {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  color: var(--mut);
+  font-size: 13px;
+  line-height: 1;
+}
+.tag-badge.add-btn {
+  background: transparent;
+  border-style: dashed;
+  color: var(--ink-secondary);
+  cursor: pointer;
+}
+
+/* -------------------------------------------
+   VIEW 1: HOME CONTENT
+------------------------------------------- */
+.home-content-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr 280px;
+  gap: 24px;
+  align-items: start;
+}
+.section-reorder-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.reorder-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #FFFFFF;
+  transition: all .2s;
+  cursor: pointer;
+}
+.reorder-item:hover {
+  border-color: rgba(200, 155, 101, 0.4);
+}
+.reorder-item.active {
+  background: var(--gold-bg);
+  border-color: rgba(200, 155, 101, 0.5);
+}
+.reorder-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.drag-dots {
+  color: #b0bac9;
+  cursor: grab;
+  font-size: 16px;
+  user-select: none;
+}
+.reorder-text h5 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+}
+.reorder-text span {
+  font-size: 11px;
+  color: var(--mut);
+}
+
+.cube-sides-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 8px;
+}
+.cube-side-card {
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #faf8f5;
+  font-size: 12px;
+}
+.cube-side-card b {
+  display: block;
+  font-size: 13px;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+.cube-side-card span {
+  color: var(--mut);
+  font-size: 11px;
+}
+
+/* Live Preview Card */
+.preview-box {
+  background: #0c1a2e;
+  color: #FFFFFF;
+  border-radius: 16px;
+  padding: 24px 20px;
+  box-shadow: 0 16px 40px rgba(12, 26, 46, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+.preview-box::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 140px;
+  height: 140px;
+  background: radial-gradient(circle, rgba(232, 215, 190, 0.18), transparent 70%);
+  border-radius: 50%;
+}
+.p-tag {
+  font-size: 9px;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+  display: block;
+}
+.p-title {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 26px;
+  line-height: 1.1;
+  margin: 0 0 12px;
+}
+.p-title em { color: var(--gold); font-style: italic; }
+.p-desc {
+  font-size: 12px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0 0 20px;
+}
+.p-btn {
+  display: inline-block;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: var(--gold);
+  color: #0c1a2e;
+  font-size: 10px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.history-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+.history-item:last-child { border-bottom: 0; }
+.history-item b {
+  font-size: 12px;
+  color: var(--ink);
+  font-weight: 500;
+}
+.history-item span {
+  font-size: 11px;
+  color: var(--mut);
+}
+
+/* -------------------------------------------
+   VIEW 2: FURNITURE RENT (ASET SEWA TABLE)
+------------------------------------------- */
+.alert-notice {
+  background: #fdf6ec;
+  border: 1px solid rgba(224, 185, 131, 0.4);
+  border-radius: 12px;
+  padding: 14px 20px;
+  margin-bottom: 24px;
+  font-size: 13px;
+  color: #8c602c;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.alert-notice b {
+  color: #633f14;
+}
+
+.category-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.cat-tab {
+  padding: 8px 20px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  background: #FFFFFF;
+  color: var(--ink-secondary);
+  cursor: pointer;
+  transition: all .2s;
+}
+.cat-tab:hover {
+  color: var(--ink);
+}
+.cat-tab.active {
+  background: #0c1a2e;
+  color: #FFFFFF;
+}
+
+.table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 16px;
+}
+.toolbar-left {
+  display: flex;
+  gap: 12px;
+  flex-grow: 1;
+}
+.search-input {
+  max-width: 320px;
+  padding: 9px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #FFFFFF;
+  font-size: 13px;
+}
+.filter-select {
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #FFFFFF;
+  font-size: 13px;
+}
+.toolbar-right {
+  font-size: 12px;
+  color: var(--ink-secondary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.bulk-action {
+  color: var(--ink);
+  font-weight: 500;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.bulk-delete {
+  color: #dc2626;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Data Table */
+.data-table-card {
+  padding: 0;
+  overflow: hidden;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+.data-table th {
+  padding: 14px 20px;
+  font-size: 11px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--mut);
+  border-bottom: 1px solid var(--line);
+  font-weight: 600;
+  background: #faf8f5;
+}
+.data-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+  font-size: 13px;
+}
+.data-table tr:last-child td {
+  border-bottom: 0;
+}
+.data-table tr:hover td {
+  background: #fdfbf9;
+}
+.asset-cell {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.asset-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: #0e2038;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  color: var(--gold);
+}
+.asset-thumb.g1 { background: linear-gradient(135deg, #102a4d, #2f568f); }
+.asset-thumb.g2 { background: linear-gradient(190deg, #E8D7BE, #876d4d); }
+.asset-thumb.g3 { background: radial-gradient(circle, #E8D7BE, #183761); }
+.asset-thumb.g4 { background: linear-gradient(0deg, #09172d, #3d6ca8); }
+.asset-thumb.g5 { background: conic-gradient(#183761, #E8D7BE, #183761); }
+
+.asset-title {
+  margin: 0 0 2px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+}
+.asset-title:hover {
+  color: var(--gold-dark);
+}
+.asset-desc {
+  margin: 0;
+  font-size: 12px;
+  color: var(--mut);
+}
+
+.status-pill {
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.status-pill.available { background: #e8f5e9; color: #1e7e34; }
+.status-pill.rented { background: #fef3c7; color: #b45309; }
+.status-pill.draft { background: #f3f4f6; color: #6b7280; }
+
+.table-footer {
+  padding: 14px 20px;
+  font-size: 12px;
+  color: var(--mut);
+  background: #faf8f5;
+  border-top: 1px solid var(--line);
+}
+
+/* -------------------------------------------
+   VIEW 3: EDIT ASET
+------------------------------------------- */
+.edit-asset-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 28px;
+  align-items: start;
+}
+.two-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.upload-dropzone {
+  border: 2px dashed rgba(200, 155, 101, 0.45);
+  border-radius: 14px;
+  padding: 30px;
+  text-align: center;
+  background: #fdfbf9;
+  cursor: pointer;
+  transition: all .2s;
+  margin-bottom: 18px;
+}
+.upload-dropzone:hover {
+  background: #faf4eb;
+  border-color: var(--gold-dark);
+}
+.upload-dropzone b {
+  display: block;
+  font-size: 13px;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.upload-dropzone span {
+  font-size: 11px;
+  color: var(--mut);
+}
+
+.photo-previews-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.photo-item {
+  aspect-ratio: 4/3;
+  border-radius: 12px;
+  background: #0e2038;
+  position: relative;
+  overflow: hidden;
+}
+.photo-item.p1 { background: linear-gradient(190deg, #E8D7BE, #876d4d); }
+.photo-item.p2 { background: linear-gradient(135deg, #102a4d, #2f568f); }
+.photo-item.p3 { background: radial-gradient(circle, #E8D7BE, #183761); }
+.photo-item.p4 { background: linear-gradient(0deg, #09172d, #3d6ca8); }
+.cover-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #0c1a2e;
+  color: #FFFFFF;
+  font-size: 9px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.setting-row:last-child { border-bottom: 0; }
+.setting-info h5 {
+  margin: 0 0 2px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.setting-info p {
+  margin: 0;
+  font-size: 11px;
+  color: var(--mut);
+}
+
+.wa-preview-box {
+  background: #f7f5f2;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #1e293b;
+  margin-bottom: 12px;
+}
+.wa-target {
+  font-size: 11px;
+  color: var(--mut);
+}
+
+.catalog-row-preview {
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #FFFFFF;
+}
+.crp-num {
+  font-size: 11px;
+  color: var(--gold-dark);
+  font-weight: 500;
+}
+.crp-title {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 22px;
+  margin: 2px 0 4px;
+}
+.crp-desc {
+  font-size: 12px;
+  color: var(--mut);
+  margin: 0 0 12px;
+}
+.crp-btn {
+  font-size: 11px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--ink);
+  font-weight: 600;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 2px;
+  text-decoration: none;
+}
+
+/* Floating Switcher Pill (Fixed at bottom-right) */
+.switch-floating-pill {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100;
+  background: #0c1a2e;
+  color: #FFFFFF;
+  padding: 12px 22px;
+  border-radius: 999px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all .3s cubic-bezier(.2, .7, .2, 1);
+}
+.switch-floating-pill:hover {
+  background: #182e4f;
+  transform: translateY(-2px);
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.45);
+  border-color: var(--gold);
+}
+.switch-floating-pill .pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981;
+}
+
+/* Toast Notification */
+.toast-notice {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: #0c1a2e;
+  color: #FFFFFF;
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-size: 13px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: all .35s cubic-bezier(.2, .7, .2, 1);
+  z-index: 120;
+}
+.toast-notice.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 1080px) {
+  .home-content-grid { grid-template-columns: 1fr; }
+  .edit-asset-grid { grid-template-columns: 1fr; }
+  aside.sidebar { width: 72px; padding: 20px 8px; }
+  .brand-sub, .nav-item span, .nav-group-title, .user-info, .nav-badge { display: none; }
+  .brand-logo { font-size: 20px; text-align: center; }
+  .nav-item { justify-content: center; padding: 12px; }
+  main.main-content { padding: 24px 20px 80px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Floating Switcher to End-User Interface -->
+<a href="kwn-prototype.html" class="switch-floating-pill" title="Buka prototype website publik">
+  <span class="pulse-dot"></span>
+  <span>Buka Website (End User)</span>
+  <span>→</span>
+</a>
+
+<!-- Toast notification popup -->
+<div id="toast" class="toast-notice">Perubahan berhasil disimpan!</div>
+
+<div class="app-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand-box">
+      <div class="brand-logo sf">KWN</div>
+      <div class="brand-sub">Content Studio</div>
+    </div>
+
+    <div class="nav-group-title">Website</div>
+    <div class="nav-list">
+      <div class="nav-item" data-view="dashboard">
+        <div class="nav-item-left">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span>Dashboard</span>
+        </div>
+      </div>
+      <div class="nav-item active" data-view="home-content">
+        <div class="nav-item-left">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>Home Content</span>
+        </div>
+      </div>
+      <div class="nav-item" data-view="our-project">
+        <div class="nav-item-left">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          <span>Our Project</span>
+        </div>
+        <span class="nav-badge">12</span>
+      </div>
+      <div class="nav-item" data-view="furniture-rent">
+        <div class="nav-item-left">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21V9l8-5 8 5v12"/><rect x="9.5" y="13" width="5" height="8"/></svg>
+          <span>Furniture Rent</span>
+        </div>
+        <span class="nav-badge">36</span>
+      </div>
+      <div class="nav-item" data-view="clients">
+        <div class="nav-item-left">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Clients</span>
+        </div>
+        <span class="nav-badge">12</span>
+      </div>
+    </div>
+
+    <div class="nav-group-title">Pengaturan</div>
+    <div class="nav-list">
+      <div class="nav-item">
+        <div class="nav-item-left">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>Contact Info</span>
+        </div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-item-left">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>Media Library</span>
+        </div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-item-left">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Pengguna &amp; Akses</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">AD</div>
+      <div class="user-info">
+        <div class="user-name">Admin KWN</div>
+        <div class="user-role">Editor · Online</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    
+    <!-- ==============================================
+         VIEW 1: HOME CONTENT (Default)
+    ============================================== -->
+    <div id="view-home-content" class="view-panel active">
+      <div class="top-bar">
+        <div class="breadcrumbs">
+          <span>Website</span> &rsaquo; <span class="current">Home Content</span>
+        </div>
+        <div class="top-actions">
+          <span class="badge-status">Draft · disimpan 2 menit lalu</span>
+          <a href="kwn-prototype.html" target="_blank" class="btn btn-secondary">Preview ↗</a>
+          <button class="btn btn-secondary" onclick="showToast('Draft berhasil disimpan!')">Simpan Draft</button>
+          <button class="btn btn-primary" onclick="showToast('Perubahan berhasil di-publish ke website!')">Publish</button>
+        </div>
+      </div>
+
+      <div class="page-title-wrap">
+        <h1 class="page-title sf">Home <em>Content</em></h1>
+        <p class="page-desc">Atur urutan, tampilan, dan isi setiap bagian halaman utama website.</p>
+      </div>
+
+      <div class="home-content-grid">
+        <!-- Col 1: Section List -->
+        <div class="cms-card">
+          <span class="card-header-label">Bagian Halaman</span>
+          <div class="section-reorder-list">
+            <div class="reorder-item active">
+              <div class="reorder-left">
+                <span class="drag-dots">⋮⋮</span>
+                <div class="reorder-text">
+                  <h5>Hero</h5>
+                  <span>Judul &amp; kubus menu</span>
+                </div>
+              </div>
+              <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+            <div class="reorder-item">
+              <div class="reorder-left">
+                <span class="drag-dots">⋮⋮</span>
+                <div class="reorder-text">
+                  <h5>About</h5>
+                  <span>Core business</span>
+                </div>
+              </div>
+              <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+            <div class="reorder-item">
+              <div class="reorder-left">
+                <span class="drag-dots">⋮⋮</span>
+                <div class="reorder-text">
+                  <h5>Services</h5>
+                  <span>2 layanan</span>
+                </div>
+              </div>
+              <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+            <div class="reorder-item">
+              <div class="reorder-left">
+                <span class="drag-dots">⋮⋮</span>
+                <div class="reorder-text">
+                  <h5>Clients</h5>
+                  <span>12 logo</span>
+                </div>
+              </div>
+              <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+            <div class="reorder-item">
+              <div class="reorder-left">
+                <span class="drag-dots">⋮⋮</span>
+                <div class="reorder-text">
+                  <h5>Our Project</h5>
+                  <span>5 karya tampil</span>
+                </div>
+              </div>
+              <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+            <div class="reorder-item">
+              <div class="reorder-left">
+                <span class="drag-dots">⋮⋮</span>
+                <div class="reorder-text">
+                  <h5>Furniture Rent Teaser</h5>
+                  <span>Tombol ke katalog</span>
+                </div>
+              </div>
+              <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+            <div class="reorder-item">
+              <div class="reorder-left">
+                <span class="drag-dots">⋮⋮</span>
+                <div class="reorder-text">
+                  <h5>Contact</h5>
+                  <span>Alamat, telepon, IG</span>
+                </div>
+              </div>
+              <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Col 2: Hero Editor Form -->
+        <div class="cms-card">
+          <span class="card-header-label">Edit · Hero</span>
+          
+          <div class="form-group">
+            <div class="form-label">
+              <span>Judul utama</span>
+              <span class="char-count" id="hero-title-count">38 / 60</span>
+            </div>
+            <input type="text" id="input-hero-title" class="form-input" value="Solution for All Your Event Needs">
+          </div>
+
+          <div class="form-group">
+            <div class="form-label">
+              <span>Deskripsi singkat</span>
+              <span class="char-count" id="hero-desc-count">118 / 160</span>
+            </div>
+            <textarea id="input-hero-desc" class="form-textarea">Kami ahli dalam eksekusi proyek predesigned maupun design and build — dari booth pameran hingga penyelenggaraan event.</textarea>
+          </div>
+
+          <div class="two-cols">
+            <div class="form-group">
+              <div class="form-label"><span>Teks tombol utama</span></div>
+              <input type="text" id="input-hero-btn" class="form-input" value="Konsultasi →">
+            </div>
+            <div class="form-group">
+              <div class="form-label"><span>Tautan tombol</span></div>
+              <input type="text" class="form-input" value="#contact">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="form-label"><span>Tag layanan</span></div>
+            <div class="tags-row">
+              <span class="tag-badge">Design and Build <button>&times;</button></span>
+              <span class="tag-badge">Event Organizer <button>&times;</button></span>
+              <button class="tag-badge add-btn" onclick="showToast('Fitur penambahan tag')">+ Tambah</button>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top:24px">
+            <div class="form-label">
+              <span>Sisi kubus menu</span>
+              <span style="color:var(--mut);font-size:11px">Urutan putar 3D</span>
+            </div>
+            <div class="cube-sides-grid">
+              <div class="cube-side-card">
+                <b>01 · About</b>
+                <span>Tautan: #about</span>
+              </div>
+              <div class="cube-side-card">
+                <b>02 · Our Project</b>
+                <span>Tautan: #projects</span>
+              </div>
+              <div class="cube-side-card">
+                <b>03 · Furniture Rent</b>
+                <span>Tautan: /rental</span>
+              </div>
+              <div class="cube-side-card">
+                <b>04 · Contact</b>
+                <span>Tautan: #contact</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Col 3: Live Preview & Audit -->
+        <div style="display:flex;flex-direction:column;gap:24px">
+          <div class="cms-card" style="padding:20px">
+            <span class="card-header-label">Live Preview</span>
+            <div class="preview-box">
+              <span class="p-tag">Exhibition &amp; Event</span>
+              <h4 class="p-title sf" id="preview-title">Solution for <em>All Your Event</em> Needs</h4>
+              <p class="p-desc" id="preview-desc">Kami ahli dalam eksekusi proyek predesigned maupun design and build.</p>
+              <span class="p-btn" id="preview-btn">Konsultasi →</span>
+            </div>
+          </div>
+
+          <div class="cms-card">
+            <span class="card-header-label">Riwayat Perubahan</span>
+            <div class="history-list">
+              <div class="history-item">
+                <b>Admin KWN</b>
+                <span>Mengubah judul Hero · 2 mnt lalu</span>
+              </div>
+              <div class="history-item">
+                <b>Sales Tim</b>
+                <span>Memperbarui kontak · kemarin</span>
+              </div>
+              <div class="history-item">
+                <b>Admin KWN</b>
+                <span>Publish versi 14 · 3 hari lalu</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==============================================
+         VIEW 2: FURNITURE RENT (ASET SEWA)
+    ============================================== -->
+    <div id="view-furniture-rent" class="view-panel">
+      <div class="top-bar">
+        <div class="breadcrumbs">
+          <span>Website</span> &rsaquo; <span class="current">Furniture Rent</span>
+        </div>
+        <div class="top-actions">
+          <a href="kwn-prototype.html#rental" target="_blank" class="btn btn-secondary">Lihat Halaman ↗</a>
+          <button class="btn btn-primary" onclick="switchView('edit-asset')">+ Tambah Aset</button>
+        </div>
+      </div>
+
+      <div class="page-title-wrap">
+        <h1 class="page-title sf">Aset <em>Sewa</em></h1>
+        <p class="page-desc">Kelola properti, furniture, dan sign box yang tampil di halaman Furniture Rent.</p>
+      </div>
+
+      <div class="alert-notice">
+        <b>Harga tidak ditampilkan.</b> Pengunjung menghubungi tim lewat tombol WhatsApp "Tanya Ketersediaan" pada tiap aset.
+      </div>
+
+      <div class="category-tabs">
+        <button class="cat-tab active" data-cat="all">Semua Aset</button>
+        <button class="cat-tab" data-cat="Properti">Properti (14)</button>
+        <button class="cat-tab" data-cat="Furniture">Furniture (14)</button>
+        <button class="cat-tab" data-cat="Sign Box">Sign Box (8)</button>
+      </div>
+
+      <div class="table-toolbar">
+        <div class="toolbar-left">
+          <input type="text" id="asset-search" class="search-input" placeholder="Cari nama aset...">
+          <select class="filter-select">
+            <option>Status: Semua</option>
+            <option>Tersedia</option>
+            <option>Sedang disewa</option>
+            <option>Draft</option>
+          </select>
+        </div>
+        <div class="toolbar-right">
+          <span>2 dipilih</span> · 
+          <span class="bulk-action" onclick="showToast('2 aset disetel tampil')">Tampilkan</span> · 
+          <span class="bulk-action" onclick="showToast('2 aset disembunyikan')">Sembunyikan</span> · 
+          <span class="bulk-delete" onclick="showToast('Aset dihapus')">Hapus</span>
+        </div>
+      </div>
+
+      <div class="cms-card data-table-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th width="40"><input type="checkbox" id="check-all"></th>
+              <th>Aset</th>
+              <th>Kategori</th>
+              <th>Status</th>
+              <th>Tampil di Web</th>
+              <th>Diperbarui</th>
+              <th width="40"></th>
+            </tr>
+          </thead>
+          <tbody id="asset-rows">
+            <tr data-cat="Properti" onclick="switchView('edit-asset')" style="cursor:pointer">
+              <td><input type="checkbox" checked onclick="event.stopPropagation()"></td>
+              <td>
+                <div class="asset-cell">
+                  <div class="asset-thumb g1"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 21V9l8-5 8 5v12"/><rect x="9.5" y="13" width="5" height="8"/></svg></div>
+                  <div>
+                    <h5 class="asset-title">Backdrop &amp; Partisi</h5>
+                    <p class="asset-desc">Panel modular untuk booth dan panggung</p>
+                  </div>
+                </div>
+              </td>
+              <td>Properti</td>
+              <td><span class="status-pill available">Tersedia</span></td>
+              <td><label class="switch" onclick="event.stopPropagation()"><input type="checkbox" checked><span class="slider"></span></label></td>
+              <td>Hari ini</td>
+              <td>⋮</td>
+            </tr>
+            <tr data-cat="Properti" onclick="switchView('edit-asset')" style="cursor:pointer">
+              <td><input type="checkbox" checked onclick="event.stopPropagation()"></td>
+              <td>
+                <div class="asset-cell">
+                  <div class="asset-thumb g2"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 21V9l8-5 8 5v12"/><rect x="9.5" y="13" width="5" height="8"/></svg></div>
+                  <div>
+                    <h5 class="asset-title">Podium &amp; Stage</h5>
+                    <p class="asset-desc">Platform panggung untuk presentasi</p>
+                  </div>
+                </div>
+              </td>
+              <td>Properti</td>
+              <td><span class="status-pill rented">Sedang disewa</span></td>
+              <td><label class="switch" onclick="event.stopPropagation()"><input type="checkbox" checked><span class="slider"></span></label></td>
+              <td>Kemarin</td>
+              <td>⋮</td>
+            </tr>
+            <tr data-cat="Properti" onclick="switchView('edit-asset')" style="cursor:pointer">
+              <td><input type="checkbox" onclick="event.stopPropagation()"></td>
+              <td>
+                <div class="asset-cell">
+                  <div class="asset-thumb g3"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 21V9l8-5 8 5v12"/><rect x="9.5" y="13" width="5" height="8"/></svg></div>
+                  <div>
+                    <h5 class="asset-title">Counter Display</h5>
+                    <p class="asset-desc">Reception dan counter siap pasang</p>
+                  </div>
+                </div>
+              </td>
+              <td>Properti</td>
+              <td><span class="status-pill available">Tersedia</span></td>
+              <td><label class="switch" onclick="event.stopPropagation()"><input type="checkbox" checked><span class="slider"></span></label></td>
+              <td>3 hari lalu</td>
+              <td>⋮</td>
+            </tr>
+            <tr data-cat="Furniture" onclick="switchView('edit-asset')" style="cursor:pointer">
+              <td><input type="checkbox" onclick="event.stopPropagation()"></td>
+              <td>
+                <div class="asset-cell">
+                  <div class="asset-thumb g4"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 21V9l8-5 8 5v12"/><rect x="9.5" y="13" width="5" height="8"/></svg></div>
+                  <div>
+                    <h5 class="asset-title">Sofa Lounge</h5>
+                    <p class="asset-desc">Area lounge nyaman untuk ruang tamu booth</p>
+                  </div>
+                </div>
+              </td>
+              <td>Furniture</td>
+              <td><span class="status-pill available">Tersedia</span></td>
+              <td><label class="switch" onclick="event.stopPropagation()"><input type="checkbox" checked><span class="slider"></span></label></td>
+              <td>5 hari lalu</td>
+              <td>⋮</td>
+            </tr>
+            <tr data-cat="Sign Box" onclick="switchView('edit-asset')" style="cursor:pointer">
+              <td><input type="checkbox" onclick="event.stopPropagation()"></td>
+              <td>
+                <div class="asset-cell">
+                  <div class="asset-thumb g5"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 21V9l8-5 8 5v12"/><rect x="9.5" y="13" width="5" height="8"/></svg></div>
+                  <div>
+                    <h5 class="asset-title">Sign Box Backlit</h5>
+                    <p class="asset-desc">Kotak lampu grafis menyala</p>
+                  </div>
+                </div>
+              </td>
+              <td>Sign Box</td>
+              <td><span class="status-pill draft">Draft</span></td>
+              <td><label class="switch" onclick="event.stopPropagation()"><input type="checkbox"><span class="slider"></span></label></td>
+              <td>1 minggu lalu</td>
+              <td>⋮</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="table-footer">
+          Menampilkan 5 dari 14 aset · Seret baris untuk mengubah urutan tampil
+        </div>
+      </div>
+    </div>
+
+    <!-- ==============================================
+         VIEW 3: EDIT ASET
+    ============================================== -->
+    <div id="view-edit-asset" class="view-panel">
+      <div class="top-bar">
+        <div class="breadcrumbs">
+          <span style="cursor:pointer" onclick="switchView('furniture-rent')">Furniture Rent</span> &rsaquo; <span class="current">Edit Aset</span>
+        </div>
+        <div class="top-actions">
+          <button class="btn btn-secondary" onclick="switchView('furniture-rent')">Batal</button>
+          <button class="btn btn-secondary" onclick="showToast('Draft aset disimpan!')">Simpan Draft</button>
+          <button class="btn btn-primary" onclick="showToast('Aset berhasil diperbarui!'); setTimeout(()=>switchView('furniture-rent'), 900)">Simpan &amp; Tampilkan</button>
+        </div>
+      </div>
+
+      <div class="page-title-wrap">
+        <h1 class="page-title sf">Edit <em>Aset</em></h1>
+        <p class="page-desc" id="edit-sub">Sofa Lounge · Furniture</p>
+      </div>
+
+      <div class="edit-asset-grid">
+        <!-- Main Form -->
+        <div style="display:flex;flex-direction:column;gap:24px">
+          <div class="cms-card">
+            <span class="card-header-label">Informasi Aset</span>
+
+            <div class="form-group">
+              <div class="form-label"><span>Nama aset</span></div>
+              <input type="text" id="edit-asset-name" class="form-input" value="Sofa Lounge">
+            </div>
+
+            <div class="two-cols">
+              <div class="form-group">
+                <div class="form-label"><span>Kategori</span></div>
+                <select class="form-select">
+                  <option selected>Furniture</option>
+                  <option>Properti</option>
+                  <option>Sign Box</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <div class="form-label"><span>Status ketersediaan</span></div>
+                <select class="form-select">
+                  <option selected>Tersedia</option>
+                  <option>Sedang disewa</option>
+                  <option>Dalam perawatan</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="form-label">
+                <span>Deskripsi</span>
+                <span class="char-count" id="edit-desc-count">46 / 140</span>
+              </div>
+              <textarea id="edit-asset-desc" class="form-textarea">Area lounge nyaman untuk ruang tamu booth.</textarea>
+            </div>
+
+            <div class="form-group">
+              <div class="form-label"><span>Tag</span></div>
+              <div class="tags-row">
+                <span class="tag-badge">Lounge <button>&times;</button></span>
+                <span class="tag-badge">Booth <button>&times;</button></span>
+                <span class="tag-badge">Seating <button>&times;</button></span>
+                <button class="tag-badge add-btn" onclick="showToast('Tambah tag')">+ Tambah</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Photo Upload & Gallery -->
+          <div class="cms-card">
+            <span class="card-header-label">Foto Aset</span>
+            <div class="upload-dropzone" onclick="showToast('Pilih foto dari komputer')">
+              <b>Tarik foto ke sini atau pilih dari Media Library</b>
+              <span>JPG, PNG, WEBP · maks 5 MB · rasio 4:3 disarankan</span>
+            </div>
+            <div class="photo-previews-grid">
+              <div class="photo-item p1"><span class="cover-badge">Cover</span></div>
+              <div class="photo-item p2"></div>
+              <div class="photo-item p3"></div>
+              <div class="photo-item p4"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Side Settings -->
+        <div style="display:flex;flex-direction:column;gap:24px">
+          <!-- Visibility & Pricing Policy -->
+          <div class="cms-card">
+            <span class="card-header-label">Tampilan di Website</span>
+            <div class="setting-row">
+              <div class="setting-info">
+                <h5>Tampilkan aset</h5>
+                <p>Muncul di tab Furniture</p>
+              </div>
+              <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <h5>Tampilkan harga</h5>
+                <p>Dinonaktifkan oleh kebijakan</p>
+              </div>
+              <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+            </div>
+          </div>
+
+          <!-- WhatsApp message generator preview -->
+          <div class="cms-card">
+            <span class="card-header-label">Pesan WhatsApp Otomatis</span>
+            <div class="wa-preview-box" id="wa-preview-text">
+              Halo KWN, saya ingin menanyakan ketersediaan sewa: <b>Sofa Lounge</b>
+            </div>
+            <div class="wa-target">
+              Tujuan: +62 815 1709 9050
+            </div>
+          </div>
+
+          <!-- Catalogue card preview -->
+          <div class="cms-card">
+            <span class="card-header-label">Preview Baris Katalog</span>
+            <div class="catalog-row-preview">
+              <span class="crp-num">03</span>
+              <h4 class="crp-title sf" id="crp-title">Sofa Lounge</h4>
+              <p class="crp-desc" id="crp-desc">Area lounge nyaman untuk ruang tamu booth.</p>
+              <a href="#" class="crp-btn">Tanya →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+/* Simple interactive view router */
+function switchView(viewName) {
+  document.querySelectorAll('.view-panel').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+
+  const targetView = document.getElementById('view-' + viewName);
+  if (targetView) targetView.classList.add('active');
+
+  const navItem = document.querySelector(`.nav-item[data-view="${viewName}"]`);
+  if (navItem) navItem.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* Sidebar navigation binding */
+document.querySelectorAll('.nav-item[data-view]').forEach(item => {
+  item.addEventListener('click', () => {
+    switchView(item.dataset.view);
+  });
+});
+
+/* Realtime Sync for Home Content Editor */
+const heroTitleInput = document.getElementById('input-hero-title');
+const heroDescInput = document.getElementById('input-hero-desc');
+const heroBtnInput = document.getElementById('input-hero-btn');
+
+if (heroTitleInput) {
+  heroTitleInput.addEventListener('input', e => {
+    const val = e.target.value;
+    document.getElementById('preview-title').innerHTML = val ? val.replace(/(All Your Event)/gi, '<em>$1</em>') : 'Solution for <em>All Your Event</em> Needs';
+    document.getElementById('hero-title-count').textContent = `${val.length} / 60`;
+  });
+}
+if (heroDescInput) {
+  heroDescInput.addEventListener('input', e => {
+    const val = e.target.value;
+    document.getElementById('preview-desc').textContent = val || 'Kami ahli dalam eksekusi proyek predesigned maupun design and build.';
+    document.getElementById('hero-desc-count').textContent = `${val.length} / 160`;
+  });
+}
+if (heroBtnInput) {
+  heroBtnInput.addEventListener('input', e => {
+    document.getElementById('preview-btn').textContent = e.target.value || 'Konsultasi →';
+  });
+}
+
+/* Realtime Sync for Asset Edit */
+const assetNameInput = document.getElementById('edit-asset-name');
+const assetDescInput = document.getElementById('edit-asset-desc');
+
+if (assetNameInput) {
+  assetNameInput.addEventListener('input', e => {
+    const val = e.target.value || 'Nama Aset';
+    document.getElementById('edit-sub').textContent = `${val} · Furniture`;
+    document.getElementById('crp-title').textContent = val;
+    document.getElementById('wa-preview-text').innerHTML = `Halo KWN, saya ingin menanyakan ketersediaan sewa: <b>${val}</b>`;
+  });
+}
+if (assetDescInput) {
+  assetDescInput.addEventListener('input', e => {
+    const val = e.target.value;
+    document.getElementById('crp-desc').textContent = val;
+    document.getElementById('edit-desc-count').textContent = `${val.length} / 140`;
+  });
+}
+
+/* Category Filter Tabs for Rental View */
+document.querySelectorAll('.cat-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const cat = tab.dataset.cat;
+    document.querySelectorAll('#asset-rows tr').forEach(row => {
+      if (cat === 'all' || row.dataset.cat === cat) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  });
+});
+
+/* Search Filter */
+const searchInput = document.getElementById('asset-search');
+if (searchInput) {
+  searchInput.addEventListener('input', e => {
+    const q = e.target.value.toLowerCase();
+    document.querySelectorAll('#asset-rows tr').forEach(row => {
+      const text = row.textContent.toLowerCase();
+      row.style.display = text.includes(q) ? '' : 'none';
+    });
+  });
+}
+
+/* Toast helper */
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2400);
+}
+</script>
+</body>
+</html>

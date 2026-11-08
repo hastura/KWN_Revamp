@@ -20,16 +20,46 @@
     margin: 0;
     text-align: center;
   }
-  a {
+  .card {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 32px 40px;
+    max-width: 480px;
+  }
+  h2 { margin: 0 0 10px; font-weight: 500; }
+  p { color: rgba(255, 255, 255, 0.7); font-size: 14px; margin-bottom: 24px; }
+  .links {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-size: 13px;
+    text-decoration: none;
+    color: #10283F;
+    background: #E8D7BE;
+    font-weight: 500;
+  }
+  .btn.outline {
+    background: transparent;
+    border: 1px solid rgba(232, 215, 190, 0.4);
     color: #E8D7BE;
-    text-decoration: underline;
   }
 </style>
 </head>
 <body>
-  <div>
-    <p>Mengarahkan ke prototype...</p>
-    <p><a href="KWN%20Prototype/kwn-prototype.html">Klik di sini jika tidak beralih otomatis</a></p>
+  <div class="card">
+    <h2>KWN — Kreasi Warna Nusantara</h2>
+    <p>Mengarahkan ke Website Prototype...</p>
+    <div class="links">
+      <a href="KWN%20Prototype/kwn-prototype.html" class="btn">🌐 Buka Website (End User)</a>
+      <a href="KWN%20Prototype/kwn-cms.html" class="btn outline">⚙️ Buka CMS Studio</a>
+    </div>
   </div>
 </body>
 </html>

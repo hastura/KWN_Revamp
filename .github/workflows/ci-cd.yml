@@ -44,6 +44,7 @@ jobs:
         run: |
           echo "Verifying prototype files and structure..."
           test -f "KWN Prototype/kwn-prototype.html" || { echo "::error::Missing KWN Prototype/kwn-prototype.html"; exit 1; }
+          test -f "KWN Prototype/kwn-cms.html" || { echo "::error::Missing KWN Prototype/kwn-cms.html"; exit 1; }
           test -f "KWN Editorial/kwn-editorial.html" || { echo "::error::Missing KWN Editorial/kwn-editorial.html"; exit 1; }
           test -f "index.html" || { echo "::error::Missing index.html"; exit 1; }
           test -f "README.md" || { echo "::error::Missing README.md"; exit 1; }

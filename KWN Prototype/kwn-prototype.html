@@ -893,9 +893,71 @@ footer {
   section { padding: 70px 0; }
   #pv { display: none; }
 }
+
+/* Floating Switcher Pill */
+.switch-floating-pill {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100;
+  background: rgba(14, 26, 48, 0.88);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  color: #FFFFFF;
+  padding: 12px 22px;
+  border-radius: 999px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border: 1px solid rgba(232, 215, 190, 0.35);
+  transition: all .3s cubic-bezier(.2, .7, .2, 1);
+}
+.switch-floating-pill:hover {
+  background: var(--gold);
+  color: #0b1a2f;
+  transform: translateY(-2px);
+  box-shadow: 0 20px 50px rgba(232, 215, 190, 0.35);
+  border-color: var(--gold);
+}
+.switch-floating-pill .pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981;
+}
+.nav-cms-link {
+  color: var(--gold) !important;
+  border: 1px solid rgba(232, 215, 190, 0.35);
+  padding: 4px 14px !important;
+  border-radius: 999px;
+  font-size: 11px !important;
+  letter-spacing: .12em !important;
+  text-transform: uppercase;
+  transition: all .3s !important;
+  align-self: center;
+}
+.nav-cms-link:hover {
+  background: var(--gold);
+  color: #0b1a2f !important;
+}
+.nav-cms-link::after { display: none !important; }
 </style>
 </head>
 <body>
+
+<!-- Floating Switcher to CMS -->
+<a href="kwn-cms.html" class="switch-floating-pill" title="Buka CMS Content Studio">
+  <span class="pulse-dot"></span>
+  <span>Buka CMS Studio</span>
+  <span>→</span>
+</a>
 
 <div id="cur">Kreasi Warna Nusantara</div>
 <div id="pv" class="glass"></div>
@@ -913,6 +975,7 @@ footer {
       <a data-nav="projects">Our Project</a>
       <a data-nav="rental">Furniture Rent</a>
       <a data-nav="contact">Contact</a>
+      <a href="kwn-cms.html" class="nav-cms-link">CMS Studio ↗</a>
     </nav>
     <button class="bg-btn" id="bb">Menu</button>
   </div>
