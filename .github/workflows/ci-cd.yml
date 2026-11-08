@@ -1,0 +1,89 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # ----------------------------------------------------
+  # CI: Validation & Integrity Checks
+  # ----------------------------------------------------
+  ci-validate:
+    name: Validate & Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Linters
+        run: npm install -g htmlhint
+
+      - name: Validate HTML Files
+        run: |
+          echo "Running HTML syntax checks..."
+          htmlhint "**/*.html" --rules "doctype-first=true,tag-pair=true,spec-char-escape=false,id-unique=true,src-not-empty=true,title-require=true" || true
+
+      - name: Verify Key Project Files
+        run: |
+          echo "Verifying prototype files and structure..."
+          test -f "KWN Prototype/kwn-prototype.html" || { echo "::error::Missing KWN Prototype/kwn-prototype.html"; exit 1; }
+          test -f "KWN Editorial/kwn-editorial.html" || { echo "::error::Missing KWN Editorial/kwn-editorial.html"; exit 1; }
+          test -f "index.html" || { echo "::error::Missing index.html"; exit 1; }
+          test -f "README.md" || { echo "::error::Missing README.md"; exit 1; }
+          echo "All core assets verified successfully."
+
+  # ----------------------------------------------------
+  # CD: Continuous Deployment to GitHub Pages
+  # ----------------------------------------------------
+  cd-deploy:
+    name: Deploy to GitHub Pages
+    needs: ci-validate
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Prepare Site Bundle
+        run: |
+          mkdir -p _site
+          cp -r "KWN Prototype" _site/
+          cp -r "KWN Editorial" _site/
+          cp -r "KWN Glassmorphism" _site/
+          cp -r "KWN Classy Style" _site/
+          cp README.md _site/
+          # Set the Navy Glassmorphism prototype as the primary index.html
+          cp "KWN Prototype/kwn-prototype.html" _site/index.html
+          echo "Static site bundle successfully prepared in _site/"
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
